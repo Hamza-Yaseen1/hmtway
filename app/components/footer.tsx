@@ -172,10 +172,10 @@ export default function Footer() {
       <HeartbeatLine />
 
       {/* MAIN CONTENT: full width with consistent side padding */}
-      <div className="w-full px-6 sm:px-10 lg:px-16">
-        <div className="grid grid-cols-1 gap-14 pt-10 pb-24 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[1.7fr_1fr_1fr_1fr] lg:gap-14 lg:pt-12 lg:pb-32">
+      <div className="w-full px-6 sm:px-10 lg:px-16 ">
+        <div className="grid  grid-cols-3 gap-4 pt-10 pb-24 md:gap-8 lg:grid-cols-[1.7fr_1fr_1fr_1fr] lg:gap-14 lg:pt-12 lg:pb-32">
           {/* BRAND */}
-          <div className="max-w-[370px]">
+          <div className="col-span-3 max-w-[370px] lg:col-span-1 ">
            <Link
             href="/"
             aria-label="HMT Home"
@@ -239,7 +239,7 @@ export default function Footer() {
 
           {/* NAVIGATION COLUMNS */}
           {footerLinks.map((section) => (
-            <div key={section.title}>
+            <div key={section.title} className="mt-8 lg:mt-0" >
               <h3 className="mb-6 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#526078]">
                 {section.title}
               </h3>
@@ -249,7 +249,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-[13px] text-[#27364d] transition-colors duration-200 hover:text-[#3478ff]"
+                      className="text-[13px] text-[#27364d] transition-colors duration-200 hover:text-[#3478ff] sm:text-[14px]"
                     >
                       {link.label}
                     </Link>
