@@ -1,32 +1,22 @@
-
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
   BrainCircuit,
   BriefcaseBusiness,
-  CheckCircle2,
-  ChevronRight,
-  Clock3,
   FolderKanban,
   GraduationCap,
   Monitor,
   Server,
-  Sparkles,
   TrendingUp,
   UsersRound,
 } from "lucide-react";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "motion/react";
-
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { inter } from "@/lib/fonts";
+import Counter from "./Counter";
 
 const careers = [
   {
@@ -56,8 +46,7 @@ const careers = [
     course: "Endpoint Management",
     courseSubtitle: "Device Security & Administration",
     courseLink: "/courses",
-    description:
-      "Manage, protect, and optimize devices across organizations.",
+    description: "Manage, protect, and optimize devices across organizations.",
     skills: ["Intune", "Device Security", "Microsoft 365"],
     color: "#6366F1",
   },
@@ -72,8 +61,7 @@ const careers = [
     course: "Microsoft Teams Administration",
     courseSubtitle: "Collaboration & Communication",
     courseLink: "/courses",
-    description:
-      "Build reliable collaboration environments for modern teams.",
+    description: "Build reliable collaboration environments for modern teams.",
     skills: ["Microsoft Teams", "Microsoft 365", "Communication"],
     color: "#0EA5E9",
   },
@@ -88,8 +76,7 @@ const careers = [
     course: "SharePoint Administration",
     courseSubtitle: "Microsoft Cloud Collaboration",
     courseLink: "/courses",
-    description:
-      "Create connected workplaces and smarter document workflows.",
+    description: "Create connected workplaces and smarter document workflows.",
     skills: ["SharePoint", "Power Automate", "Microsoft 365"],
     color: "#14B8A6",
   },
@@ -104,593 +91,300 @@ const careers = [
     course: "AI & Machine Learning",
     courseSubtitle: "Intelligent Systems & Automation",
     courseLink: "/courses/ai",
-    description:
-      "Design intelligent solutions that solve real-world problems.",
+    description: "Design intelligent solutions that solve real-world problems.",
     skills: ["Python", "Machine Learning", "AI Automation"],
     color: "#8B5CF6",
   },
 ];
 
 type Career = (typeof careers)[number];
-
-const formatCurrency = (value: number) =>
+const money = (n: number) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
-  }).format(value);
-
-function AnimatedNumber({
-  value,
-  prefix = "",
-  suffix = "",
-}: {
-  value: number;
-  prefix?: string;
-  suffix?: string;
-}) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const previousValue = useRef(value);
-  const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    const from = previousValue.current;
-    previousValue.current = value;
-
-    if (reduceMotion) return;
-
-    let frame = 0;
-    const duration = 650;
-    const start = performance.now();
-
-    const animate = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      setDisplayValue(
-        Math.round(from + (value - from) * eased)
-      );
-
-      if (progress < 1) {
-        frame = requestAnimationFrame(animate);
-      }
-    };
-
-    frame = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(frame);
-  }, [value, reduceMotion]);
-
-  const shownValue = reduceMotion ? value : displayValue;
-
-  return (
-    <span className="tabular-nums">
-      {prefix}
-      {shownValue.toLocaleString("en-US")}
-      {suffix}
-    </span>
-  );
-}
-
-function CareerCard({
-  career,
-  selected,
-  onClick,
-  index,
-}: {
-  career: Career;
-  selected: boolean;
-  onClick: () => void;
-  index: number;
-}) {
-  const Icon = career.icon;
-
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      aria-pressed={selected}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.07,
-      }}
-      whileHover={{ y: -5 }}
-      whileTap={{ scale: 0.98 }}
-      className={`
-        group relative flex min-h-[185px] min-w-[210px]
-        flex-1 flex-col overflow-hidden rounded-[20px]
-        border p-5 text-left
-        transition-[background-color,border-color,box-shadow]
-        duration-300
-        focus-visible:outline-2
-        focus-visible:outline-offset-4
-        focus-visible:outline-[#2563EB]
-        ${
-          selected
-            ? "border-[#102D60]  bg-gradient-to-br from-[#A9DCEB] via-[#5AA7D8] to-[#174A8B] text-white shadow-[0_16px_35px_rgba(16,45,96,0.20)]"
-            : "border-[#DCE7F4] bg-white text-[#102D60] hover:border-[#B7D3F5] hover:shadow-[0_12px_30px_rgba(16,45,96,0.08)]"
-        }
-      `}
-    >
-      {selected && (
-        <motion.div
-          layoutId="active-career-glow"
-          className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#2563EB]/35 blur-2xl"
-        />
-      )}
-
-      <div className="relative flex w-full items-start justify-between">
-        <div
-          className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-            selected ? "bg-white/10" : "bg-[#EFF6FF]"
-          }`}
-        >
-          <Icon
-            size={21}
-            strokeWidth={1.8}
-            className={
-              selected ? "text-[#93C5FD]" : "text-[#2563EB]"
-            }
-          />
-        </div>
-
-        <ArrowUpRight
-          size={17}
-          className={
-            selected
-              ? "text-[#93C5FD]"
-              : "text-[#94A3B8] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          }
-        />
-      </div>
-
-      <div className="relative mt-5">
-        <h3 className="text-[13px] font-bold leading-snug">
-          {career.shortName}
-        </h3>
-
-        <p
-          className={`mt-1.5 text-lg font-bold tracking-tight ${
-            selected ? "text-white" : "text-[#1558B0]"
-          }`}
-        >
-          {formatCurrency(career.salary)}
-          <span
-            className={`ml-1 text-[11px] font-medium ${
-              selected ? "text-[#BFDBFE]" : "text-[#64748B]"
-            }`}
-          >
-            /yr
-          </span>
-        </p>
-      </div>
-
-      <div className="relative mt-auto pt-4">
-        <span
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-            selected
-              ? "bg-white/15 text-[#DBEAFE]"
-              : "bg-[#EFF6FF] text-[#2563EB]"
-          }`}
-        >
-          <TrendingUp size={11} />
-          +{career.growth}% Growth
-        </span>
-      </div>
-    </motion.button>
-  );
-}
+  }).format(n);
+const maxSalary = Math.max(...careers.map((c) => c.salary));
 
 export default function CareerExplorer() {
   const [selectedId, setSelectedId] = useState(careers[0].id);
-  const selectedCareer =
-    careers.find((career) => career.id === selectedId) ??
-    careers[0];
-
+  const selected = careers.find((c) => c.id === selectedId) ?? careers[0];
   const reduceMotion = useReducedMotion();
-
-  const maxSalary = Math.max(
-    ...careers.map((career) => career.salary)
-  );
+  const transition = { duration: reduceMotion ? 0 : 0.25 };
 
   return (
     <section
-      className={`${inter.className} relative isolate overflow-hidden bg-[#F8FBFF] py-16 sm:py-20 lg:py-24`}
+      className={`${inter.className} bg-[#F7F9FC] py-16 text-[#091A35] sm:py-20 lg:py-24`}
     >
-      {/* Background decorations */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-      >
-        <div className="absolute -left-48 top-0 h-[500px] w-[500px] rounded-full bg-[#DBEAFE]/50 blur-[110px]" />
-        <div className="absolute -right-48 bottom-0 h-[500px] w-[500px] rounded-full bg-[#BFDBFE]/35 blur-[120px]" />
-
-        <div
-          className="absolute left-8 top-10 hidden h-24 w-24 opacity-30 lg:block"
-          style={{
-            backgroundImage:
-              "radial-gradient(#3B82F6 1.5px, transparent 1.5px)",
-            backgroundSize: "14px 14px",
-          }}
-        />
-      </div>
-
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
-
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto mb-11 max-w-3xl text-center"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#2875AD] bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#1558B0] shadow-sm">
-            <Sparkles size={14} />
-            Explore Your Future
-          </span>
-
-          <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.04em] text-[#102D60] sm:text-4xl lg:text-[46px]">
-            Real Careers.{" "}
-            <span className="text-[#2563EB]">
-              Real Opportunities.
-            </span>
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-[#64748B] sm:text-base">
-            Discover high-growth technology careers, explore
-            earning potential, and find the skills to get started.
+        <div className="mb-10 max-w-[740px] sm:mb-12">
+          <p className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#17618D]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#3D99C7]" /> HMT WAY /
+            CAREER PATHWAYS
           </p>
-        </motion.div>
-
-        {/* Career selection cards */}
-        <div className="relative">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-              Choose your career path
-            </p>
-
-            <span className="hidden items-center gap-1 text-xs text-[#64748B] sm:flex">
-              Select to explore
-              <ChevronRight size={14} />
-            </span>
-          </div>
-
-          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-5 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0">
-            {careers.map((career, index) => (
-              <div
-                key={career.id}
-                className="w-[215px] shrink-0 snap-start sm:w-[230px] lg:w-auto"
-              >
-                <CareerCard
-                  career={career}
-                  selected={selectedId === career.id}
-                  onClick={() => setSelectedId(career.id)}
-                  index={index}
-                />
-              </div>
-            ))}
-          </div>
+          <h2 className="max-w-[700px] text-[clamp(2.1rem,4.5vw,3.7rem)] font-semibold leading-[1.12] tracking-[-0.045em]">
+            Find the career that{" "}
+            <span className="text-[#17618D]">moves you forward.</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[15px] leading-7 text-[#607086]">
+            Compare technology roles, explore their earning potential and
+            discover a practical path to the skills you need.
+          </p>
         </div>
 
-        {/* Main Dashboard */}
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="mt-7 overflow-hidden rounded-[26px] border border-[#DCE7F4] bg-white shadow-[0_20px_65px_rgba(16,45,96,0.06)] sm:mt-8"
-        >
-          {/* Dashboard Header */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E8EEF7] px-5 py-5 sm:px-8 lg:px-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <h3 className="text-sm font-semibold text-[#142B4A]">
+            Explore career paths{" "}
+            <span className="ml-1 text-[#8190A2]">({careers.length})</span>
+          </h3>
+          <p className="hidden text-xs text-[#718198] sm:block">
+            Select a role to see its details
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {careers.map((career, i) => {
+            const Icon = career.icon;
+            const active = selectedId === career.id;
+            return (
+              <motion.button
+                key={career.id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setSelectedId(career.id)}
+                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.04 }}
+                className={`group relative flex min-h-[190px] min-w-0 flex-col rounded-2xl border p-4 text-left transition-[border-color,background-color,box-shadow] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17618D] sm:p-5 ${active ? "border-[#2875AD] bg-[#2875AD] text-white shadow-[0_14px_32px_rgba(12,43,82,.15)]" : "border-[#DDE5ED] bg-white text-[#112846] hover:border-[#86B4D1] hover:shadow-[0_8px_24px_rgba(12,43,82,.06)]"}`}
+              >
+                <div className="flex w-full items-start justify-between gap-2">
+                  <span
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl ${active ? "bg-white/10 text-[#B4E4F4]" : "bg-[#EAF3F8] text-[#17618D]"}`}
+                  >
+                    <Icon size={20} strokeWidth={1.8} />
+                  </span>
+                  <ArrowUpRight
+                    size={16}
+                    className={active ? "text-[#A8C5D8]" : "text-[#9AA9B9]"}
+                  />
+                </div>
+                <div className="mt-5 flex-1">
+                  <p className="min-h-10 text-[13px] font-semibold leading-5 sm:text-sm">
+                    {career.shortName}
+                  </p>
+                  <p
+                    className={`mt-2 text-lg font-semibold tracking-tight tabular-nums sm:text-xl ${active ? "text-white" : "text-[#2875AD]"}`}
+                  >
+                    {money(career.salary)}
+                  </p>
+                  <p
+                    className={`mt-0.5 text-[11px] ${active ? "text-[#BED0E0]" : "text-[#7B8999]"}`}
+                  >
+                    illustrative / year
+                  </p>
+                </div>
+                <div
+                  className={`mt-4 flex items-center gap-1.5 border-t pt-3 text-[11px] font-medium ${active ? "border-white/20 text-[#B9E4F5]" : "border-[#EDF1F5] text-[#17618D]"}`}
+                >
+                  <TrendingUp size={13} /> +{career.growth}% growth
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 overflow-hidden rounded-[22px] border border-[#DDE5ED] bg-white shadow-[0_16px_50px_rgba(10,35,66,.045)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E8EDF2] px-5 py-4 sm:px-8">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EAF3F8] text-[#17618D]">
                 <BriefcaseBusiness size={18} />
               </span>
-
               <div>
-                <p className="text-xs font-bold text-[#102D60]">
-                  Career Insights
-                </p>
-                <p className="text-[11px] text-[#94A3B8]">
-                  Explore your future in technology
+                <h3 className="text-sm font-semibold">Career insights</h3>
+                <p className="text-xs text-[#8190A2]">
+                  Role overview and comparison
                 </p>
               </div>
             </div>
-
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#F0FDF4] px-3 py-1.5 text-[11px] font-semibold text-[#15803D]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E]" />
-              Career Explorer
+            <span className="rounded-full border border-[#D6E8F2] bg-[#F1F8FB] px-3 py-1 text-[11px] font-medium text-[#17618D]">
+              {selected.shortName}
             </span>
           </div>
-
-          {/* Dashboard Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
-
-            {/* Left: Career Details */}
-            <div className="p-5 sm:p-8 lg:border-r lg:border-[#E8EEF7] lg:p-10">
+          <div className="grid lg:grid-cols-[1.05fr_.95fr]">
+            <div className="min-w-0 p-5 sm:p-8 lg:border-r lg:border-[#E8EDF2] lg:p-9">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={selectedCareer.id}
-                  initial={{
-                    opacity: 0,
-                    y: reduceMotion ? 0 : 12,
-                  }}
+                  key={selected.id}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{
-                    opacity: 0,
-                    y: reduceMotion ? 0 : -8,
-                  }}
-                  transition={{ duration: 0.25 }}
+                  exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                  transition={transition}
                 >
-                  <div className="mb-6">
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#2563EB]">
-                      Selected Career
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#17618D]">
+                    Selected career
+                  </p>
+                  <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
+                    {selected.title}
+                  </h3>
+                  <p className="mt-3 max-w-lg text-sm leading-7 text-[#64748B]">
+                    {selected.description}
+                  </p>
+                  <div className="mt-7 rounded-2xl border border-[#E2E9F0] bg-[#F7FAFC] p-5 sm:p-6">
+                    <p className="text-xs font-medium text-[#6B7C91]">
+                      Illustrative annual salary (USD)
                     </p>
-
-                    <h3 className="text-2xl font-extrabold tracking-tight text-[#102D60] sm:text-[30px]">
-                      {selectedCareer.title}
-                    </h3>
-
-                    <p className="mt-2 max-w-md text-sm leading-6 text-[#64748B]">
-                      {selectedCareer.description}
-                    </p>
-                  </div>
-
-                  {/* Salary */}
-                  <div className="rounded-2xl border border-[#DCE7F4] bg-[#F8FBFF] p-5 sm:p-6">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs font-medium text-[#64748B]">
-                        Illustrative Annual Salary (USD)
-                      </p>
-
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#2563EB]">
-                        <TrendingUp size={17} />
+                    <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[#2875AD] sm:text-4xl">
+                      <span className="inline-block">
+                        $
+                        <Counter
+                          key={selected.id}
+                          to={selected.salary}
+                          suffix=""
+                        />
                       </span>
-                    </div>
-
-                    <p className="mt-3 text-3xl font-extrabold tracking-tight text-[#1558B0] sm:text-4xl">
-                      <AnimatedNumber
-                        value={selectedCareer.salary}
-                        prefix="$"
-                      />
                     </p>
-
-                    {/* Salary progress bar */}
-                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#DFEAF8]">
+                    <p className="mt-1 text-xs text-[#718198]">
+                      USD · before tax
+                    </p>
+                    <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-[#DCE7EE]">
                       <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#60A5FA]"
+                        className="h-full rounded-full bg-[#2586B5]"
                         initial={false}
                         animate={{
-                          width: `${
-                            (selectedCareer.salary / maxSalary) * 100
-                          }%`,
+                          width: `${(selected.salary / maxSalary) * 100}%`,
                         }}
-                        transition={{
-                          duration: reduceMotion ? 0 : 0.7,
-                          ease: "easeOut",
-                        }}
+                        transition={{ duration: reduceMotion ? 0 : 0.45 }}
                       />
                     </div>
-
-                    <p className="mt-2 text-[11px] text-[#94A3B8]">
-                      Relative to the highest sample salary
+                    <p className="mt-2 text-[11px] text-[#8290A0]">
+                      Relative to highest salary shown
                     </p>
                   </div>
-
-                  {/* Stat cards */}
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-[#E4ECF6] p-4 sm:p-5">
-                      <TrendingUp
-                        size={17}
-                        className="mb-3 text-[#2563EB]"
-                      />
-
-                      <p className="text-xl font-extrabold text-[#102D60] sm:text-2xl">
-                        <AnimatedNumber
-                          value={selectedCareer.growth}
-                          prefix="+"
-                          suffix="%"
-                        />
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-[#E2E9F0] p-4">
+                      <TrendingUp size={17} className="mb-3 text-[#17618D]" />
+                      <p className="text-xl font-semibold tabular-nums">
+                        +{selected.growth}%
                       </p>
-
-                      <p className="mt-1 text-[11px] leading-4 text-[#64748B]">
-                        Illustrative Growth
+                      <p className="mt-1 text-xs text-[#738397]">
+                        Illustrative growth
                       </p>
                     </div>
-
-                    <div className="rounded-2xl border border-[#E4ECF6] p-4 sm:p-5">
+                    <div className="rounded-xl border border-[#E2E9F0] p-4">
                       <BriefcaseBusiness
                         size={17}
-                        className="mb-3 text-[#2563EB]"
+                        className="mb-3 text-[#17618D]"
                       />
-
-                      <p className="text-xl font-extrabold text-[#102D60] sm:text-2xl">
-                        <AnimatedNumber
-                          value={selectedCareer.openings}
-                        />
+                      <p className="text-xl font-semibold tabular-nums">
+                        {selected.openings.toLocaleString()}
                       </p>
-
-                      <p className="mt-1 text-[11px] leading-4 text-[#64748B]">
-                        Sample Job Openings
+                      <p className="mt-1 text-xs text-[#738397]">
+                        Sample openings
                       </p>
                     </div>
                   </div>
-
-                  {/* Skills */}
-                  <div className="mt-7">
-                    <p className="mb-3 text-xs font-bold text-[#102D60]">
-                      Skills you'll develop
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCareer.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-full border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-1.5 text-[11px] font-medium text-[#1558B0]"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
+                  <h4 className="mt-7 text-sm font-semibold">
+                    Skills you'll develop
+                  </h4>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {selected.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-md border border-[#DBE6EF] bg-[#F7FAFC] px-3 py-1.5 text-xs text-[#36536D]"
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
-
-            {/* Right: Comparison + Course */}
-            <div className="flex flex-col bg-[#FCFDFF] p-5 sm:p-8 lg:p-10">
-
-              {/* Salary Comparison */}
-              <div>
-                <div className="mb-6 flex items-center justify-between gap-3">
-                  <div>
-                    <h4 className="text-base font-bold text-[#102D60]">
-                      Salary Comparison
-                    </h4>
-
-                    <p className="mt-1 text-xs text-[#94A3B8]">
-                      Illustrative annual salaries (USD)
-                    </p>
-                  </div>
-
-                  <span className="rounded-lg bg-[#EFF6FF] p-2 text-[#2563EB]">
-                    <TrendingUp size={18} />
-                  </span>
-                </div>
-
-                <div className="space-y-5">
-                  {careers.map((career) => {
-                    const isActive =
-                      selectedCareer.id === career.id;
-
-                    return (
-                      <button
-                        key={career.id}
-                        type="button"
-                        onClick={() => setSelectedId(career.id)}
-                        className="group block w-full text-left"
-                      >
-                        <div className="mb-2 flex items-center justify-between gap-3">
-                          <span
-                            className={`text-xs font-semibold ${
-                              isActive
-                                ? "text-[#1558B0]"
-                                : "text-[#64748B]"
-                            }`}
-                          >
-                            {career.shortName}
-                          </span>
-
-                          <span
-                            className={`text-xs font-bold tabular-nums ${
-                              isActive
-                                ? "text-[#1558B0]"
-                                : "text-[#102D60]"
-                            }`}
-                          >
-                            ${Math.round(career.salary / 1000)}k
-                          </span>
-                        </div>
-
-                        <div className="h-2.5 overflow-hidden rounded-full bg-[#E8EEF7]">
-                          <motion.div
-                            initial={false}
-                            animate={{
-                              width: `${
-                                (career.salary / maxSalary) * 100
-                              }%`,
-                              opacity: isActive ? 1 : 0.4,
-                            }}
-                            transition={{
-                              duration: reduceMotion ? 0 : 0.5,
-                            }}
-                            className="h-full rounded-full bg-gradient-to-r from-[#1558B0] to-[#3B82F6]"
-                          />
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Recommended course */}
-              <div className="mt-9">
-                <div className="mb-4 flex items-center gap-2">
-                  <GraduationCap
-                    size={18}
-                    className="text-[#2563EB]"
-                  />
-
-                  <h4 className="text-base font-bold text-[#102D60]">
-                    Your Learning Path
-                  </h4>
-                </div>
-
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedCareer.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <Link
-                      href={selectedCareer.courseLink}
-                      className="group flex items-center gap-4 rounded-2xl border border-[#DCE7F4] bg-white p-4 transition-all duration-300 hover:border-[#93C5FD] hover:shadow-[0_10px_25px_rgba(37,99,235,0.08)] sm:p-5"
+            <div className="flex min-w-0 flex-col bg-[#FCFDFE] p-5 sm:p-8 lg:p-9">
+              <h3 className="text-base font-semibold">Salary comparison</h3>
+              <p className="mt-1 text-xs text-[#8190A2]">
+                Illustrative annual salaries in USD
+              </p>
+              <div className="mt-7 space-y-5">
+                {careers.map((career) => {
+                  const active = selected.id === career.id;
+                  return (
+                    <button
+                      key={career.id}
+                      type="button"
+                      onClick={() => setSelectedId(career.id)}
+                      aria-pressed={active}
+                      className="block w-full rounded-md text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17618D]"
                     >
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB]">
-                        <GraduationCap size={24} />
+                      <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                        <span
+                          className={
+                            active
+                              ? "font-semibold text-[#2875AD]"
+                              : "text-[#65768A]"
+                          }
+                        >
+                          {career.shortName}
+                        </span>
+                        <span className="font-semibold tabular-nums text-[#233D5A]">
+                          {money(career.salary)}
+                        </span>
                       </div>
-
-                      <div className="min-w-0 flex-1">
-                        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">
-                          Suggested Course
-                        </p>
-
-                        <h5 className="text-sm font-bold text-[#102D60]">
-                          {selectedCareer.course}
-                        </h5>
-
-                        <p className="mt-1 text-xs leading-5 text-[#64748B]">
-                          {selectedCareer.courseSubtitle}
-                        </p>
+                      <div className="h-2 overflow-hidden rounded-full bg-[#E6ECF2]">
+                        <motion.div
+                          initial={false}
+                          animate={{
+                            width: `${(career.salary / maxSalary) * 100}%`,
+                            opacity: active ? 1 : 0.48,
+                          }}
+                          transition={{ duration: reduceMotion ? 0 : 0.4 }}
+                          className="h-full rounded-full bg-[#2586B5]"
+                        />
                       </div>
-
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] transition-transform group-hover:translate-x-1">
-                        <ArrowUpRight size={18} />
-                      </span>
-                    </Link>
-                  </motion.div>
-                </AnimatePresence>
+                    </button>
+                  );
+                })}
               </div>
-
-              {/* Bottom CTA */}
-              <div className="mt-auto pt-7">
+              <div className="mt-10 border-t border-[#E5EBF1] pt-7">
+                <div className="mb-4 flex items-center gap-2">
+                  <GraduationCap size={19} className="text-[#17618D]" />
+                  <h3 className="text-base font-semibold">
+                    Recommended learning path
+                  </h3>
+                </div>
                 <Link
-                  href="/courses"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1558B0] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_6px_20px_rgba(21,88,176,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#10488F] hover:shadow-[0_10px_25px_rgba(21,88,176,0.22)]"
+                  href={selected.courseLink}
+                  className="group flex items-center gap-3 rounded-xl border border-[#DCE6EE] bg-white p-4 transition-colors hover:border-[#83B4D0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#17618D]"
                 >
-                  Explore All Courses
-                  <ArrowRight
-                    size={17}
-                    className="transition-transform group-hover:translate-x-1"
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#EAF3F8] text-[#17618D]">
+                    <GraduationCap size={22} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">
+                      {selected.course}
+                    </span>
+                    <span className="mt-1 block text-xs leading-5 text-[#748498]">
+                      {selected.courseSubtitle}
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    className="shrink-0 text-[#17618D] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   />
                 </Link>
               </div>
+              <Link
+                href="/courses"
+                className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#2875AD] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#174570] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17618D] lg:mt-auto lg:translate-y-0"
+              >
+                <span>Explore all courses</span>
+                <ArrowRight size={17} />
+              </Link>
             </div>
           </div>
-        </motion.div>
-
-        {/* Disclaimer */}
-        <p className="mx-auto mt-6 max-w-3xl text-center text-[11px] leading-5 text-[#94A3B8]">
-          Salary, growth, and job-opening figures are illustrative
-          placeholders. Actual outcomes vary by location, experience,
-          employer, and market conditions. Replace these values
-          with verified data before publishing.
+        </div>
+        <p className="mx-auto mt-6 max-w-3xl text-center text-[11px] leading-5 text-[#8290A0]">
+          Salary, growth and job-opening figures are illustrative placeholders.
+          Verify them against current sources before publishing.
         </p>
       </div>
     </section>

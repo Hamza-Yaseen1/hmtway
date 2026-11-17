@@ -44,7 +44,7 @@ export default function HeroSection() {
               {/* Explore Courses */}
               <Link
                 href="/courses"
-                className="inline-flex min-h-12 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#174A8B] to-[#2875AD] px-7 text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(23,74,139,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(23,74,139,0.25)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174A8B]"
+                className={`${inter.className} inline-flex min-h-12 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#174A8B] to-[#2875AD] px-7 text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(23,74,139,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(23,74,139,0.25)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174A8B]`}
               >
                 Explore Courses
               </Link>
@@ -54,7 +54,7 @@ export default function HeroSection() {
                 href="#how-it-works"
                 className="group inline-flex min-h-12 items-center gap-3 text-[15px] font-medium text-[#07152F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174A8B]"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#2875AD] bg-white/40 text-[#174A8B] backdrop-blur-md transition-all duration-300 group-hover:bg-[#174A8B] group-hover:text-white">
+                <span className={`${inter.className} flex h-11 w-11 items-center justify-center rounded-full border border-[#2875AD] bg-white/40 text-[#174A8B] backdrop-blur-md transition-all duration-300 group-hover:bg-[#174A8B] group-hover:text-white`}>
                   <Play
                     size={18}
                     fill="currentColor"
